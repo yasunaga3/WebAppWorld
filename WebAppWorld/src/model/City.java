@@ -23,13 +23,14 @@ public class City implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private int id;
-	private String district;
 	private String name;
-	private int population;
 	//bi-directional many-to-one association to Country
 	@ManyToOne
 	@JoinColumn(name="CountryCode")
 	private Country country;
+	private String district;
+	private int population;
+
 
 
 

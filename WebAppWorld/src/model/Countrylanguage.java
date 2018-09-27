@@ -18,14 +18,15 @@ import javax.persistence.NamedQuery;
 public class Countrylanguage implements Serializable {
 	private static final long serialVersionUID = 1L;
 
-	@EmbeddedId
-	private CountrylanguagePK id;
-	private String isOfficial;
-	private float percentage;
 	//bi-directional many-to-one association to Country
 	@ManyToOne
 	@JoinColumn(name="CountryCode")
 	private Country country;
+	@EmbeddedId
+	private CountrylanguagePK id;
+	private String isOfficial;
+	private float percentage;
+
 
 
 

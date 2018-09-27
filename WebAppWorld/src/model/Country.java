@@ -23,20 +23,21 @@ public class Country implements Serializable {
 	@Id
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private String code;
-	private Integer capital;
-	private String code2;
-	private String continent;
-	private Float gnp;
-	private Float GNPOld;
-	private String governmentForm;
-	private String headOfState;
-	private Short indepYear;
-	private Float lifeExpectancy;
-	private String localName;
 	private String name;
-	private int population;
+	private Enum<Continent> continent;
 	private String region;
 	private float surfaceArea;
+	private Short indepYear;
+	private int population;
+	private Float lifeExpectancy;
+	private Float gnp;
+	private Float GNPOld;
+	private String localName;
+	private String governmentForm;
+	private String headOfState;
+	private Integer capital;
+	private String code2;
+
 	//bi-directional many-to-one association to City
 	@OneToMany(mappedBy="country")
 	private List<City> cities;
@@ -73,11 +74,11 @@ public class Country implements Serializable {
 		this.code2 = code2;
 	}
 
-	public String getContinent() {
+	public Enum<Continent> getContinent() {
 		return this.continent;
 	}
 
-	public void setContinent(String continent) {
+	public void setContinent(Enum<Continent> continent) {
 		this.continent = continent;
 	}
 
