@@ -2,13 +2,21 @@ package model;
 
 public enum Continent {
 
-	Asia("Asia"), Europe("Europe"), NorthAmerica("North America"), Africa("Africa"), Oceania("Oceania"), Antarctica("Antarctica"), SouthAmerica("South America");
-    // フィールドを定義
+	ASIA("Asia"),
+	AFRICA("Africa"),
+	EUROPE("Europe"),
+	NORTH_AMERICA("North America"),
+	SOUTH_AMERICA("South America"),
+	OCEANIA("Oceania"),
+	ANTARCTICA("Antarctica");
+
+    // フィールドの定義
     private String name;
 
-	private Continent(String name) {
-		this.name = name;
-	}
+    // コンストラクタの定義
+    private Continent(String name) {
+        this.name = name;
+    }
 
     // メソッド
     public String getValue() {

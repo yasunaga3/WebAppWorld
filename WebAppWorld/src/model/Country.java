@@ -24,7 +24,7 @@ public class Country implements Serializable {
 	@GeneratedValue(strategy=GenerationType.IDENTITY)
 	private String code;
 	private String name;
-	private Enum<Continent> continent;
+	private String continent;
 	private String region;
 	private float surfaceArea;
 	private Short indepYear;
@@ -74,11 +74,11 @@ public class Country implements Serializable {
 		this.code2 = code2;
 	}
 
-	public Enum<Continent> getContinent() {
+	public String getContinent() {
 		return this.continent;
 	}
 
-	public void setContinent(Enum<Continent> continent) {
+	public void setContinent(String continent) {
 		this.continent = continent;
 	}
 
