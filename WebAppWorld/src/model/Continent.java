@@ -19,7 +19,7 @@ public enum Continent {
     }
 
     // メソッド
-    public String getValue() {
+    public String getName() {
         return this.name;
     }
 }

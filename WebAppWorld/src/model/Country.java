@@ -17,6 +17,7 @@ import javax.persistence.OneToMany;
  */
 @Entity
 @NamedQuery(name="Country.findAll", query="SELECT c FROM Country c")
+@NamedQuery(name="Country.finfByContinent", query="SELECT c FROM Country c WHERE  c.continent = :continent")
 public class Country implements Serializable {
 	private static final long serialVersionUID = 1L;
 
