@@ -25,42 +25,36 @@
 <body>
 	<form action="" method="post">
 
-		<select name="continent">
-			<option value="Japan" selected="selected" class="msg">大陸名を選択してください</option>
-			<option value ="Asia" class="Asia">Asia</option>
-			<option value ="Africa" class="Africa">Africa</option>
-			<option value ="Europe" class="Europe">Europe</option>
-			<option value ="NorthAmerica" class="NorthAmerica">North America</option>
-			<option value ="SouthAmerica" class="SouthAmerica">South America</option>
-			<option value ="Oceania" class="Oceania">Oceania</option>
+		<select name="selectBox1">
+			<option value="default" selected="selected" class="msg">大陸名を選択してください</option>
+			<option value ="opt1" class="opt1">Asia</option>
+			<option value ="opt2" class="opt2">Africa</option>
+			<option value ="opt3" class="opt3">Europe</option>
+			<option value ="opt4" class="opt4">North America</option>
+			<option value ="opt5" class="opt5">South America</option>
+			<option value ="opt6" class="opt6">Oceania</option>
 		</select>
 		&nbsp;&nbsp;
-		<select name="country">
-			<option value="Japan" selected="selected" class="msg">国名を選択してください</option>
+		<select name="selectBox2">
+			<option value="default" selected="selected" class="msg">国名を選択してください</option>
 			<% for (String c1 : asia) {	%>
-				<option value =c1 class="Asia"><%=c1 %></option>
+				<option value =c1 class="opt1"><%=c1 %></option>
 			<% } %>
-
 			<% for (String c2 : africa) {	%>
-				<option value =c2 class="Africa"><%=c2 %></option>
+				<option value =c2 class="opt2"><%=c2 %></option>
 			<% } %>
-
 			<% for (String c3 : europe) {	%>
-				<option value =c3 class="Europe"><%=c3 %></option>
+				<option value =c3 class="opt3"><%=c3 %></option>
 			<% } %>
-
 			<% for (String c4 : n_america) {	%>
-				<option value =c4 class="NorthAmerica"><%=c4 %></option>
+				<option value =c4 class="opt4"><%=c4 %></option>
 			<% } %>
-
 			<% for (String c5 : s_america) {	%>
-				<option value =c5 class="SouthAmerica"><%=c5 %></option>
+				<option value =c5 class="opt5"><%=c5 %></option>
 			<% } %>
-
 			<% for (String c6 : oceania) {	%>
-				<option value =c6 class="Oceania"><%=c6 %></option>
+				<option value =c6 class="opt6"><%=c6 %></option>
 			<% } %>
-
 		</select>
 
 	</form>
@@ -75,36 +69,36 @@
 
 	<p><a href="<c:url value='/index' />">index</a></p>
 
+
 	<script>
 	$(function() {
 		// 大陸名が変更されたら発動
-		$('select[name="continent"]').change(function() {
+		$('select[name="selectBox1"]').change(function() {
 			// 選択されている大陸のクラス名を取得
-			var continentName = $('select[name="continent"] option:selected').attr("class");
-			console.log(continentName);
+			var selectBox1Name = $('select[name="selectBox1"] option:selected').attr("class");
+			console.log(selectBox1Name);
 			// 国名の要素数を取得
-			var count = $('select[name="country"]').children().length;
+			var count = $('select[name="selectBox2"]').children().length;
 			// 国名の要素数分、for文で回す
 			for (var i=0; i<count; i++) {
-				var country = $('select[name="country"] option:eq(' + i + ')');
-				if(country.attr("class") === continentName) {
+				var selectBox2 = $('select[name="selectBox2"] option:eq(' + i + ')');
+				if(selectBox2.attr("class") === selectBox1Name) {
 					// 選択した大陸と同じクラス名だった場合
-					country.show();
+					selectBox2.show();
 				}else {
 					// 選択した大陸とクラス名が違った場合
-					if(country.attr("class") === "msg") {
+					if(selectBox2.attr("class") === "msg") {
 						// 「国名を選択して下さい」という要素だった場合
-							country.show();  //「国名を選択して下さい」を表示させる
-							country.prop('selected',true);  //「国名を選択して下さい」を強制的に選択されている状態にする
+							selectBox2.show();  //「国名を選択して下さい」を表示させる
+							selectBox2.prop('selected',true);  //「国名を選択して下さい」を強制的に選択されている状態にする
 					} else {
 						// 「国名を選択して下さい」という要素でなかった場合
-						country.hide();
+						selectBox2.hide();
 					}
 				}
 			}
 		})
 	})
 	</script>
-
 </body>
 </html>
