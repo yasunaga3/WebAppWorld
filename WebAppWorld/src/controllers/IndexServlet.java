@@ -55,22 +55,6 @@ public class IndexServlet extends HttpServlet {
 //	    System.out.println("oceanianCountries.size()=" + oceanianCountries.size());
 
 
-//	    CountryTable[] table = new CountryTable[asianCountries.size()];
-//	    for (int i = 0; i < table.length; i++) {
-//	    	CountryTable countryTable = new CountryTable();
-//	    	Country country = asianCountries.get(i);
-//	    	List<Countrylanguage> languages = getLanguagesByCountry(country, em);
-//	    	countryTable.setCountry(country);
-//	    	countryTable.setCapital(getCapitalName(country, em));
-//	    	countryTable.setLanguage(languages);
-//	    	table[i] = countryTable;
-//		}
-//	    for (CountryTable c : table) {
-//			for (Countrylanguage lan : c.getLanguage()) {
-//				System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
-//			}
-//		}
-
 	    CountryTable[] asia = getCountryTable(em, "Asia");
 	    System.out.println("asia.length=" + asia.length);
 	    for (CountryTable c : asia) {
@@ -169,11 +153,6 @@ public class IndexServlet extends HttpServlet {
 	    	countryTable.setLanguage(languages);
 	    	table[i] = countryTable;
 		}
-//	    for (CountryTable c : table) {
-//			for (Countrylanguage lan : c.getLanguage()) {
-//				System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
-//			}
-//		}
 		return table;
 	}
 }
