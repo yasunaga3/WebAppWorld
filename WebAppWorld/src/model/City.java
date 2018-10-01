@@ -17,6 +17,7 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQuery(name="City.findAll", query="SELECT c FROM City c")
+@NamedQuery(name="City.findById", query="SELECT c FROM City c WHERE  c.id = :id")
 public class City implements Serializable {
 	private static final long serialVersionUID = 1L;
 

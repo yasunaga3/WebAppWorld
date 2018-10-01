@@ -15,6 +15,8 @@ import javax.persistence.NamedQuery;
  */
 @Entity
 @NamedQuery(name="Countrylanguage.findAll", query="SELECT c FROM Countrylanguage c")
+@NamedQuery(name="Countrylanguage.getLanguage",
+							query="SELECT c FROM Countrylanguage c WHERE c.country = :country")
 public class Countrylanguage implements Serializable {
 	private static final long serialVersionUID = 1L;
 

@@ -11,7 +11,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import model.City;
 import model.Country;
+import model.CountryTable;
+import model.Countrylanguage;
 import utils.DBUtil;
 
 /**
@@ -28,13 +31,6 @@ public class IndexServlet extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 
-		String continentName = request.getParameter("selectContinent");
-		if(continentName == null || continentName.equals("")) {
-
-		} else {
-			System.out.println("continentName =" + continentName);
-		}
-
 		EntityManager em = DBUtil.createEntityManager();
 	    // 大陸ごとの国情報リストを取得する
 	    List<Country> asianCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
@@ -49,7 +45,7 @@ public class IndexServlet extends HttpServlet {
 																			  .setParameter("continent", "South America").getResultList();
 	    List<Country> oceanianCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
 				  															 .setParameter("continent", "Oceania").getResultList();
-		em.close();
+
 
 //	    System.out.println("asianCountries.size()=" + asianCountries.size());
 //	    System.out.println("africanCountries.size()=" + africanCountries.size());
@@ -58,37 +54,67 @@ public class IndexServlet extends HttpServlet {
 //	    System.out.println("sAmericanCountries.size()=" + sAmericanCountries.size());
 //	    System.out.println("oceanianCountries.size()=" + oceanianCountries.size());
 
-	    // 大陸ごとの国名を配列に格納する
+
+//	    CountryTable[] table = new CountryTable[asianCountries.size()];
+//	    for (int i = 0; i < table.length; i++) {
+//	    	CountryTable countryTable = new CountryTable();
+//	    	Country country = asianCountries.get(i);
+//	    	List<Countrylanguage> languages = getLanguagesByCountry(country, em);
+//	    	countryTable.setCountry(country);
+//	    	countryTable.setCapital(getCapitalName(country, em));
+//	    	countryTable.setLanguage(languages);
+//	    	table[i] = countryTable;
+//		}
+//	    for (CountryTable c : table) {
+//			for (Countrylanguage lan : c.getLanguage()) {
+//				System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
+//			}
+//		}
+
+	    CountryTable[] asia = getCountryTable(em, "Asia");
+	    System.out.println("asia.length=" + asia.length);
+	    for (CountryTable c : asia) {
+			for (Countrylanguage lan : c.getLanguage()) {
+			System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
+			}
+	    }
+
+
+
+
+		// Asiaの国名リスト
 	    String[] asianCountiesName = new String[asianCountries.size()];
 	    for (int i = 0; i < asianCountiesName.length; i++) {
 	    	asianCountiesName[i] = asianCountries.get(i).getName();
 		}
-//	    for (String s : asianCountiesName) { System.out.println(s); }
 
+		// Africaの国名リスト
 	    String[] africanCountiesName = new String[africanCountries.size()];
 	    for (int i = 0; i < africanCountiesName.length; i++) {
 			africanCountiesName[i] = africanCountries.get(i).getName();
 		}
-
+		// Europeの国名リスト
 	    String[] europeanCountiesName = new String[europeanCountries.size()];
 	    for (int i = 0; i < europeanCountiesName.length; i++) {
 			europeanCountiesName[i] = europeanCountries.get(i).getName();
 		}
-
+		// North Americaの国名リスト
 	    String[] nAmericanCountiesName = new String[nAmericanCountries.size()];
 	    for (int i = 0; i < nAmericanCountiesName.length; i++) {
 	    	nAmericanCountiesName[i] = nAmericanCountries.get(i).getName();
 		}
-
+		// South Americaの国名リスト
 	    String[] sAmericanCountiesName = new String[sAmericanCountries.size()];
 	    for (int i = 0; i < sAmericanCountiesName.length; i++) {
 	    	sAmericanCountiesName[i] = sAmericanCountries.get(i).getName();
 		}
-
+		// Oceaniaの国名リスト
 	    String[] oceanianCountiesName = new String[oceanianCountries.size()];
 	    for (int i = 0; i < oceanianCountiesName.length; i++) {
 	    	oceanianCountiesName[i] = oceanianCountries.get(i).getName();
 		}
+
+		em.close();
 
 		String url = "/WEB-INF/views/index.jsp";
 		request.setAttribute("ASIA", asianCountiesName);
@@ -109,4 +135,45 @@ public class IndexServlet extends HttpServlet {
 		doGet(request, response);
 	}
 
+
+	// 大陸ごとの首都名を取得する
+	private String getCapitalName(Country country, EntityManager em) {
+		int capital_code = country.getCapital();
+		City city = em.createNamedQuery("City.findById", City.class)
+								.setParameter("id", capital_code).getSingleResult();
+		return city.getName();
+	}
+
+	// 国ごとの言語リストを取得する
+	private List<Countrylanguage> getLanguagesByCountry(Country country, EntityManager em){
+		List<Countrylanguage> languages = em.createNamedQuery("Countrylanguage.getLanguage", Countrylanguage.class)
+																			.setParameter("country", country).getResultList();
+//		for (Countrylanguage c : languages) {
+//			System.out.println(c.getCountry().getName() + ": " + c.getId().getLanguage());
+//		}
+		return languages;
+	}
+
+	private CountryTable[] getCountryTable(EntityManager em, String continentName) {
+	    // 大陸ごとの国情報リストを取得する
+	    List<Country> countryList = em.createNamedQuery("Country.finfByContinent", Country.class)
+	    														.setParameter("continent", "Asia").getResultList();
+	    // 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
+	    CountryTable[] table = new CountryTable[countryList.size()];
+	    for (int i = 0; i < table.length; i++) {
+	    	CountryTable countryTable = new CountryTable();
+	    	Country country = countryList.get(i);
+	    	List<Countrylanguage> languages = getLanguagesByCountry(country, em);
+	    	countryTable.setCountry(country);
+	    	countryTable.setCapital(getCapitalName(country, em));
+	    	countryTable.setLanguage(languages);
+	    	table[i] = countryTable;
+		}
+//	    for (CountryTable c : table) {
+//			for (Countrylanguage lan : c.getLanguage()) {
+//				System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
+//			}
+//		}
+		return table;
+	}
 }
