@@ -56,12 +56,23 @@ public class IndexServlet extends HttpServlet {
 
 
 	    CountryTable[] asia = getCountryTable(em, "Asia");
-	    System.out.println("asia.length=" + asia.length);
-	    for (CountryTable c : asia) {
-			for (Countrylanguage lan : c.getLanguage()) {
-			System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
-			}
-	    }
+	    CountryTable[] africa = getCountryTable(em, "Africa");
+	    CountryTable[] europe = getCountryTable(em, "Europe");
+	    CountryTable[] northAmerica = getCountryTable(em, "North America");
+	    CountryTable[] southAmerica = getCountryTable(em, "South America");
+	    CountryTable[] oceania = getCountryTable(em, "Oceania");
+
+//	    System.out.println("asia.length=" + asia.length);
+//	    System.out.println("africa.length=" + africa.length);
+//	    System.out.println("europe.length=" + europe.length);
+//	    System.out.println("northAmerica.length=" + northAmerica.length);
+//	    System.out.println("southAmerica.length=" + southAmerica.length);
+//	    System.out.println("oceania.length=" + oceania.length);
+//	    for (CountryTable c : africa) {
+//			for (Countrylanguage lan : c.getLanguage()) {
+//			System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
+//			}
+//	    }
 
 
 
@@ -122,10 +133,16 @@ public class IndexServlet extends HttpServlet {
 
 	// 大陸ごとの首都名を取得する
 	private String getCapitalName(Country country, EntityManager em) {
-		int capital_code = country.getCapital();
-		City city = em.createNamedQuery("City.findById", City.class)
-								.setParameter("id", capital_code).getSingleResult();
-		return city.getName();
+		Integer capital_code = country.getCapital();
+		String capital = null;
+		if (capital_code != null) {
+			City city = em.createNamedQuery("City.findById", City.class)
+					.setParameter("id", capital_code).getSingleResult();
+			capital =  city.getName();
+		} else {
+			capital = "なし";
+		}
+		return capital;
 	}
 
 	// 国ごとの言語リストを取得する
@@ -141,14 +158,17 @@ public class IndexServlet extends HttpServlet {
 	private CountryTable[] getCountryTable(EntityManager em, String continentName) {
 	    // 大陸ごとの国情報リストを取得する
 	    List<Country> countryList = em.createNamedQuery("Country.finfByContinent", Country.class)
-	    														.setParameter("continent", "Asia").getResultList();
+	    														.setParameter("continent", continentName).getResultList();
+	    System.out.println("countryList.size()=" + countryList.size());
 	    // 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
 	    CountryTable[] table = new CountryTable[countryList.size()];
 	    for (int i = 0; i < table.length; i++) {
 	    	CountryTable countryTable = new CountryTable();
 	    	Country country = countryList.get(i);
 	    	List<Countrylanguage> languages = getLanguagesByCountry(country, em);
+//	    	System.out.println("languages.size()=" + languages.size());
 	    	countryTable.setCountry(country);
+	    	System.out.println(getCapitalName(country, em));
 	    	countryTable.setCapital(getCapitalName(country, em));
 	    	countryTable.setLanguage(languages);
 	    	table[i] = countryTable;
