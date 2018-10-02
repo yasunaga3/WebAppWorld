@@ -74,7 +74,13 @@ public class IndexServlet extends HttpServlet {
 //			}
 //	    }
 
-
+		String url = "/WEB-INF/views/index.jsp";
+		request.setAttribute("ASIA", asia);
+		request.setAttribute("AFRICA", africa);
+		request.setAttribute("EUROPE", europe);
+		request.setAttribute("N_AMERICA", northAmerica);
+		request.setAttribute("S_AMERICA", southAmerica);
+		request.setAttribute("OCEANIA", oceania);
 
 
 		// Asiaの国名リスト
@@ -111,13 +117,13 @@ public class IndexServlet extends HttpServlet {
 
 		em.close();
 
-		String url = "/WEB-INF/views/index.jsp";
-		request.setAttribute("ASIA", asianCountiesName);
-		request.setAttribute("AFRICA", africanCountiesName);
-		request.setAttribute("EUROPE", europeanCountiesName);
-		request.setAttribute("N_AMERICA", nAmericanCountiesName);
-		request.setAttribute("S_AMERICA", sAmericanCountiesName);
-		request.setAttribute("OCEANIA", oceanianCountiesName);
+//		String url = "/WEB-INF/views/index.jsp";
+//		request.setAttribute("ASIA", asianCountiesName);
+//		request.setAttribute("AFRICA", africanCountiesName);
+//		request.setAttribute("EUROPE", europeanCountiesName);
+//		request.setAttribute("N_AMERICA", nAmericanCountiesName);
+//		request.setAttribute("S_AMERICA", sAmericanCountiesName);
+//		request.setAttribute("OCEANIA", oceanianCountiesName);
 		RequestDispatcher rd = request.getRequestDispatcher(url);
 		rd.forward(request, response);
 	}
@@ -168,10 +174,16 @@ public class IndexServlet extends HttpServlet {
 	    	List<Countrylanguage> languages = getLanguagesByCountry(country, em);
 //	    	System.out.println("languages.size()=" + languages.size());
 	    	countryTable.setCountry(country);
-	    	System.out.println(getCapitalName(country, em));
 	    	countryTable.setCapital(getCapitalName(country, em));
 	    	countryTable.setLanguage(languages);
 	    	table[i] = countryTable;
+	    	// デバッグ検証用
+//	    	System.out.print(country.getName() + ": ");
+//	    	System.out.print(getCapitalName(country, em) + ": ");
+//			for (Countrylanguage c : languages) {
+//				System.out.print(c.getId().getLanguage() + ", ");
+//			}
+//	    	System.out.println();
 		}
 		return table;
 	}

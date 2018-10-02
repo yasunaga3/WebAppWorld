@@ -4,13 +4,13 @@
 <%@ page import="model.*" %>
 <%@ page import="java.util.*" %>
 <%
-	// 大陸ごとの国名配列の取得
-	String[] asia = (String[])request.getAttribute("ASIA");
-	String[] africa = (String[])request.getAttribute("AFRICA");
-	String[] europe = (String[])request.getAttribute("EUROPE");
-	String[] n_america = (String[])request.getAttribute("N_AMERICA");
-	String[] s_america = (String[])request.getAttribute("S_AMERICA");
-	String[] oceania = (String[])request.getAttribute("OCEANIA");
+	// 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
+	CountryTable[] asia = (CountryTable[])request.getAttribute("ASIA");
+	CountryTable[] africa = (CountryTable[])request.getAttribute("AFRICA");
+	CountryTable[] europe = (CountryTable[])request.getAttribute("EUROPE");
+	CountryTable[] n_america = (CountryTable[])request.getAttribute("N_AMERICA");
+	CountryTable[] s_america = (CountryTable[])request.getAttribute("S_AMERICA");
+	CountryTable[] oceania = (CountryTable[])request.getAttribute("OCEANIA");
 %>
 
 <!DOCTYPE html>
@@ -37,23 +37,23 @@
 		&nbsp;&nbsp;
 		<select name="selectBox2">
 			<option value="default" selected="selected" class="msg">国名を選択してください</option>
-			<% for (String c1 : asia) {	%>
-				<option value =c1 class="opt1"><%=c1 %></option>
+			<% for (CountryTable c1 : asia) {	%>
+				<option value =<%=c1.getCountry().getName() %> class="opt1"><%=c1.getCountry().getName() %></option>
 			<% } %>
-			<% for (String c2 : africa) {	%>
-				<option value =c2 class="opt2"><%=c2 %></option>
+			<% for (CountryTable c2 : africa) {	%>
+				<option value =<%=c2.getCountry().getName() %> class="opt2"><%=c2.getCountry().getName() %></option>
 			<% } %>
-			<% for (String c3 : europe) {	%>
-				<option value =c3 class="opt3"><%=c3 %></option>
+			<% for (CountryTable c3 : europe) {	%>
+				<option value =<%=c3.getCountry().getName() %> class="opt3"><%=c3.getCountry().getName() %></option>
 			<% } %>
-			<% for (String c4 : n_america) {	%>
-				<option value =c4 class="opt4"><%=c4 %></option>
+			<% for (CountryTable c4 : n_america) {	%>
+				<option value =<%=c4.getCountry().getName() %> class="opt4"><%=c4.getCountry().getName() %></option>
 			<% } %>
-			<% for (String c5 : s_america) {	%>
-				<option value =c5 class="opt5"><%=c5 %></option>
+			<% for (CountryTable c5 : s_america) {	%>
+				<option value =<%=c5.getCountry().getName() %> class="opt5"><%=c5.getCountry().getName() %></option>
 			<% } %>
-			<% for (String c6 : oceania) {	%>
-				<option value =c6 class="opt6"><%=c6 %></option>
+			<% for (CountryTable c6 : oceania) {	%>
+				<option value =<%=c6.getCountry().getName() %> class="opt6"><%=c6.getCountry().getName() %></option>
 			<% } %>
 		</select>
 
