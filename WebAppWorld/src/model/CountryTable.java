@@ -27,5 +27,4 @@ public class CountryTable {
 		this.language = language;
 	}
 
-
 }

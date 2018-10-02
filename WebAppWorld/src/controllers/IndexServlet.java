@@ -30,38 +30,24 @@ public class IndexServlet extends HttpServlet {
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
+		String url = null;
+		String inf = request.getParameter("INF");
+		if (inf == null || inf.equals("")) {
+			System.out.println("inf = null");
+		} else if("country".equals(inf)){
+			url = "/WEB-INF/views/countries_list.jsp";
+		} else if("city".equals(inf)){
+			url = "/WEB-INF/views/cities_list.jsp";
+		}
 
 		EntityManager em = DBUtil.createEntityManager();
-	    // 大陸ごとの国情報リストを取得する
-	    List<Country> asianCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
-	    															.setParameter("continent", "Asia").getResultList();
-	    List<Country> africanCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
-																		.setParameter("continent", "Africa").getResultList();
-	    List<Country> europeanCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
-																			.setParameter("continent", "Europe").getResultList();
-	    List<Country> nAmericanCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
-																			.setParameter("continent", "North America").getResultList();
-	    List<Country> sAmericanCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
-																			  .setParameter("continent", "South America").getResultList();
-	    List<Country> oceanianCountries = em.createNamedQuery("Country.finfByContinent", Country.class)
-				  															 .setParameter("continent", "Oceania").getResultList();
-
-
-//	    System.out.println("asianCountries.size()=" + asianCountries.size());
-//	    System.out.println("africanCountries.size()=" + africanCountries.size());
-//	    System.out.println("europeanCountries.size()=" + europeanCountries.size());
-//		System.out.println("nAmericanCountries.size()=" + nAmericanCountries.size());
-//	    System.out.println("sAmericanCountries.size()=" + sAmericanCountries.size());
-//	    System.out.println("oceanianCountries.size()=" + oceanianCountries.size());
-
-
+		// 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
 	    CountryTable[] asia = getCountryTable(em, "Asia");
 	    CountryTable[] africa = getCountryTable(em, "Africa");
 	    CountryTable[] europe = getCountryTable(em, "Europe");
 	    CountryTable[] northAmerica = getCountryTable(em, "North America");
 	    CountryTable[] southAmerica = getCountryTable(em, "South America");
 	    CountryTable[] oceania = getCountryTable(em, "Oceania");
-
 //	    System.out.println("asia.length=" + asia.length);
 //	    System.out.println("africa.length=" + africa.length);
 //	    System.out.println("europe.length=" + europe.length);
@@ -73,57 +59,14 @@ public class IndexServlet extends HttpServlet {
 //			System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
 //			}
 //	    }
-
-		String url = "/WEB-INF/views/index.jsp";
+		em.close();
+		// requestスコープに大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を設定
 		request.setAttribute("ASIA", asia);
 		request.setAttribute("AFRICA", africa);
 		request.setAttribute("EUROPE", europe);
 		request.setAttribute("N_AMERICA", northAmerica);
 		request.setAttribute("S_AMERICA", southAmerica);
 		request.setAttribute("OCEANIA", oceania);
-
-
-		// Asiaの国名リスト
-	    String[] asianCountiesName = new String[asianCountries.size()];
-	    for (int i = 0; i < asianCountiesName.length; i++) {
-	    	asianCountiesName[i] = asianCountries.get(i).getName();
-		}
-
-		// Africaの国名リスト
-	    String[] africanCountiesName = new String[africanCountries.size()];
-	    for (int i = 0; i < africanCountiesName.length; i++) {
-			africanCountiesName[i] = africanCountries.get(i).getName();
-		}
-		// Europeの国名リスト
-	    String[] europeanCountiesName = new String[europeanCountries.size()];
-	    for (int i = 0; i < europeanCountiesName.length; i++) {
-			europeanCountiesName[i] = europeanCountries.get(i).getName();
-		}
-		// North Americaの国名リスト
-	    String[] nAmericanCountiesName = new String[nAmericanCountries.size()];
-	    for (int i = 0; i < nAmericanCountiesName.length; i++) {
-	    	nAmericanCountiesName[i] = nAmericanCountries.get(i).getName();
-		}
-		// South Americaの国名リスト
-	    String[] sAmericanCountiesName = new String[sAmericanCountries.size()];
-	    for (int i = 0; i < sAmericanCountiesName.length; i++) {
-	    	sAmericanCountiesName[i] = sAmericanCountries.get(i).getName();
-		}
-		// Oceaniaの国名リスト
-	    String[] oceanianCountiesName = new String[oceanianCountries.size()];
-	    for (int i = 0; i < oceanianCountiesName.length; i++) {
-	    	oceanianCountiesName[i] = oceanianCountries.get(i).getName();
-		}
-
-		em.close();
-
-//		String url = "/WEB-INF/views/index.jsp";
-//		request.setAttribute("ASIA", asianCountiesName);
-//		request.setAttribute("AFRICA", africanCountiesName);
-//		request.setAttribute("EUROPE", europeanCountiesName);
-//		request.setAttribute("N_AMERICA", nAmericanCountiesName);
-//		request.setAttribute("S_AMERICA", sAmericanCountiesName);
-//		request.setAttribute("OCEANIA", oceanianCountiesName);
 		RequestDispatcher rd = request.getRequestDispatcher(url);
 		rd.forward(request, response);
 	}
@@ -161,11 +104,12 @@ public class IndexServlet extends HttpServlet {
 		return languages;
 	}
 
+	// 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
 	private CountryTable[] getCountryTable(EntityManager em, String continentName) {
 	    // 大陸ごとの国情報リストを取得する
 	    List<Country> countryList = em.createNamedQuery("Country.finfByContinent", Country.class)
 	    														.setParameter("continent", continentName).getResultList();
-	    System.out.println("countryList.size()=" + countryList.size());
+//	    System.out.println("countryList.size()=" + countryList.size());
 	    // 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
 	    CountryTable[] table = new CountryTable[countryList.size()];
 	    for (int i = 0; i < table.length; i++) {
