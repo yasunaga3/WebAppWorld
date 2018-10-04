@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import model.City;
 import model.Country;
@@ -48,25 +49,23 @@ public class IndexServlet extends HttpServlet {
 	    CountryTable[] northAmerica = getCountryTable(em, "North America");
 	    CountryTable[] southAmerica = getCountryTable(em, "South America");
 	    CountryTable[] oceania = getCountryTable(em, "Oceania");
-//	    System.out.println("asia.length=" + asia.length);
-//	    System.out.println("africa.length=" + africa.length);
-//	    System.out.println("europe.length=" + europe.length);
-//	    System.out.println("northAmerica.length=" + northAmerica.length);
-//	    System.out.println("southAmerica.length=" + southAmerica.length);
-//	    System.out.println("oceania.length=" + oceania.length);
-//	    for (CountryTable c : africa) {
-//			for (Countrylanguage lan : c.getLanguage()) {
-//			System.out.println(c.getCountry().getName() + ": " +  c.getCapital() + ": " +  lan.getId().getLanguage());
-//			}
-//	    }
 		em.close();
-		// requestスコープに大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を設定
-		request.setAttribute("ASIA", asia);
-		request.setAttribute("AFRICA", africa);
-		request.setAttribute("EUROPE", europe);
-		request.setAttribute("N_AMERICA", northAmerica);
-		request.setAttribute("S_AMERICA", southAmerica);
-		request.setAttribute("OCEANIA", oceania);
+
+//		// requestスコープに大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を設定
+//		request.setAttribute("ASIA", asia);
+//		request.setAttribute("AFRICA", africa);
+//		request.setAttribute("EUROPE", europe);
+//		request.setAttribute("N_AMERICA", northAmerica);
+//		request.setAttribute("S_AMERICA", southAmerica);
+//		request.setAttribute("OCEANIA", oceania);
+		// sessionスコープに大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を設定
+		HttpSession session = request.getSession();
+		session.setAttribute("ASIA", asia);
+		session.setAttribute("AFRICA", africa);
+		session.setAttribute("EUROPE", europe);
+		session.setAttribute("N_AMERICA", northAmerica);
+		session.setAttribute("S_AMERICA", southAmerica);
+		session.setAttribute("OCEANIA", oceania);
 		RequestDispatcher rd = request.getRequestDispatcher(url);
 		rd.forward(request, response);
 	}
@@ -75,8 +74,32 @@ public class IndexServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		request.setCharacterEncoding("UTF-8");
+		response.setCharacterEncoding("UTF-8");
+
+		// 国名とCountryオブジェクトの取得
+		String countryName = request.getParameter("selectBox2");
+		System.out.println("countyrName=" + countryName);
+		EntityManager em = DBUtil.createEntityManager();
+		Country country = getCountryByName(em, countryName);
+		// 大陸名の取得
+		String continentName = request.getParameter("selectBox1");
+		if (continentName == null || continentName.equals("default")) {
+			continentName = country.getContinent();
+			System.out.println("continentName=" + continentName);
+		} else {
+			System.out.println("continentName=" + continentName);
+		}
+		// 取得したCountryオブジェクトの都市リストを取得する
+		List<City> cities = country.getCities();
+		System.out.println("cities.size()=" + cities.size());
+
+		String url = "/WEB-INF/views/cities_list.jsp";
+		request.setAttribute("CONTINENT", continentName);
+		request.setAttribute("COUNTRY", countryName);
+		request.setAttribute("CITIES", cities);
+		RequestDispatcher rd = request.getRequestDispatcher(url);
+		rd.forward(request, response);
 	}
 
 
@@ -115,6 +138,18 @@ public class IndexServlet extends HttpServlet {
 	    for (int i = 0; i < table.length; i++) {
 	    	CountryTable countryTable = new CountryTable();
 	    	Country country = countryList.get(i);
+
+	    	//----- HibernateのLazy initializeエラー対策用の遅延処理 ------
+	    	// http://www.pwv.co.jp/~take/TakeWiki/index.php?Hibernate%E3%81%AELazy%20initialize%E3%82%A8%E3%83%A9%E3%83%BC%E3%81%A7%E3%83%93%E3%83%A5%E3%83%BC%E3%82%92%E8%A1%A8%E7%A4%BA%E3%81%A7%E3%81%8D%E3%81%AA%E3%81%84
+	    	List<City> cities = country.getCities(); // 追加
+//	    	System.out.print(country.getName());
+//	    	System.out.print("(" + cities.size() + "): ");
+	    	for (City city : cities) {
+//				System.out.print(city.getName() + ", ");
+			}
+//	    	System.out.println();
+	    	//--- HibernateのLazy initializeエラー対策用の遅延処理END ----
+
 	    	List<Countrylanguage> languages = getLanguagesByCountry(country, em);
 //	    	System.out.println("languages.size()=" + languages.size());
 	    	countryTable.setCountry(country);
@@ -131,4 +166,13 @@ public class IndexServlet extends HttpServlet {
 		}
 		return table;
 	}
+
+
+	// 国名からCountryオブジェクトを取得する
+	private Country getCountryByName(EntityManager em, String countryName) {
+		Country country = em.createNamedQuery("Country.finfByName", Country.class)
+				 .setParameter("name", countryName).getSingleResult();
+		return country;
+	}
+
 }

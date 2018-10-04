@@ -1,16 +1,24 @@
 <!-- https://yuu.1000quu.com/jquery_hierselect -->
+<!-- http://onocom.net/blog/jquery-table-search-simple/ -->
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page import="model.*" %>
 <%@ page import="java.util.*" %>
 <%
 	// 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
-	CountryTable[] asia = (CountryTable[])request.getAttribute("ASIA");
-	CountryTable[] africa = (CountryTable[])request.getAttribute("AFRICA");
-	CountryTable[] europe = (CountryTable[])request.getAttribute("EUROPE");
-	CountryTable[] n_america = (CountryTable[])request.getAttribute("N_AMERICA");
-	CountryTable[] s_america = (CountryTable[])request.getAttribute("S_AMERICA");
-	CountryTable[] oceania = (CountryTable[])request.getAttribute("OCEANIA");
+	CountryTable[] asia = (CountryTable[])session.getAttribute("ASIA");
+	CountryTable[] africa = (CountryTable[])session.getAttribute("AFRICA");
+	CountryTable[] europe = (CountryTable[])session.getAttribute("EUROPE");
+	CountryTable[] n_america = (CountryTable[])session.getAttribute("N_AMERICA");
+	CountryTable[] s_america = (CountryTable[])session.getAttribute("S_AMERICA");
+	CountryTable[] oceania = (CountryTable[])session.getAttribute("OCEANIA");
+%>
+
+<%
+	// 大陸名、国名、都市リストの取得(2回目以降)
+	String countryName = (String)request.getAttribute("COUNTRY");
+	String continentName =  (String)request.getAttribute("CONTINENT");
+	List<City> cities = (List<City>)request.getAttribute("CITIES");
 %>
 
 <!DOCTYPE html>
@@ -21,21 +29,23 @@
 	<!-- jQueryをCDNを使って読み込む -->
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
+	<script src="http://code.jquery.com/jquery-latest.js"></script>
 </head>
 
 <body>
-	<h2>都市情報</h2>
-	<form action="" method="post">
+<main class="container">
+	<h2>国ごとの都市一覧表</h2>
+	<form id="fm" action="<c:url value='/index' />" method="post">
 		<%------------------大陸選択用selectBox ---------------%>
 		<div id="search">
 			<select name="selectBox1" id="continent-select">
 				<option value="default" selected="selected" class="msg">大陸名を選択してください</option>
-				<option value ="opt1" class="opt1">Asia</option>
-				<option value ="opt2" class="opt2">Africa</option>
-				<option value ="opt3" class="opt3">Europe</option>
-				<option value ="opt4" class="opt4">North America</option>
-				<option value ="opt5" class="opt5">South America</option>
-				<option value ="opt6" class="opt6">Oceania</option>
+				<option value ="Asia" class="opt1">Asia</option>
+				<option value ="Africa" class="opt2">Africa</option>
+				<option value ="Europe" class="opt3">Europe</option>
+				<option value ="North America" class="opt4">North America</option>
+				<option value ="South America" class="opt5">South America</option>
+				<option value ="Oceania" class="opt6">Oceania</option>
 			</select>
 			&nbsp;&nbsp;
 			<%------------------国選択用selectBox ---------------%>
@@ -62,9 +72,22 @@
 			</select>
 		</div>
 	</form>
+	<br>
 
-	<%------------------ 国別都市情報表示用table ---------------%>
-	<div id="city-data">
+	<%
+		boolean b1 = false;
+		boolean b2 = false;
+		boolean b3 = false;
+		if(countryName == null || countryName.equals("")) { b1 = true; }
+		if(continentName == null || continentName.equals("")) { b2 = true; }
+		if(cities == null || cities.size() == 0) { b3 = true; }
+		if(!b1 && !b2 && !b3) {
+		%>
+		<%-- 国別都市情報表示用table --%>
+			<c:import url="_city_table.jsp" />
+		<%}%>
+
+<%-- 	<div id="city-data">
 		<table id="city-table" class="table table-borderd">
 			<thead>
 				<tr class="active">
@@ -76,57 +99,22 @@
 			</thead>
 			<tbody>
 			<%for(CountryTable c1 : asia) { %>
-				<tr>
-					<td class="hidden"><%=c1.getCountry().getName() %></td>
-
-
-				</tr>
+					<%for(City city1 : c1.getCountry().getCities()) { %>
+						<tr>
+							<td><%=c1.getCountry().getName() %></td>
+							<td><%=city1.getName() %></td>
+							<td><%=city1.getDistrict() %></td>
+							<td><%=city1.getPopulation() %></td>
+						</tr>
+					<% } %>
 			<% } %>
 			</tbody>
 		</table>
-	</div>
+	</div> --%>
 
 	<br />
-	asia.length=<%=asia.length %><br />
-	africa.length=<%=africa.length %><br />
-	europe.length=<%=europe.length %><br />
-	n_america.length=<%=n_america.length %>	<br />
-	s_america.length=<%=s_america.length %><br />
-	oceania.length=<%=oceania.length %><br />
-
-
-	&nbsp;&nbsp;
 	<p><a href="<c:url value='/top_page.html' />">index</a></p>
-
-	<script>
-	$(function() {
-		// 大陸名が変更されたら発動
-		$('select[name="selectBox1"]').change(function() {
-			// 選択されている大陸のクラス名を取得
-			var selectBox1Name = $('select[name="selectBox1"] option:selected').attr("class");
-			console.log(selectBox1Name);
-			// 国名の要素数を取得
-			var count = $('select[name="selectBox2"]').children().length;
-			// 国名の要素数分、for文で回す
-			for (var i=0; i<count; i++) {
-				var selectBox2 = $('select[name="selectBox2"] option:eq(' + i + ')');
-				if(selectBox2.attr("class") === selectBox1Name) {
-					// 選択した大陸と同じクラス名だった場合
-					selectBox2.show();
-				}else {
-					// 選択した大陸とクラス名が違った場合
-					if(selectBox2.attr("class") === "msg") {
-						// 「国名を選択して下さい」という要素だった場合
-							selectBox2.show();  //「国名を選択して下さい」を表示させる
-							selectBox2.prop('selected',true);  //「国名を選択して下さい」を強制的に選択されている状態にする
-					} else {
-						// 「国名を選択して下さい」という要素でなかった場合
-						selectBox2.hide();
-					}
-				}
-			}
-		});
-	});
-	</script>
+	</main>
+	<script src="<c:url value='/css/script2.js' />"></script>
 </body>
 </html>

@@ -4,13 +4,13 @@
 <%@ page import="model.*" %>
 <%@ page import="java.util.*" %>
 <%
-	// 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
-	CountryTable[] asia = (CountryTable[])request.getAttribute("ASIA");
-	CountryTable[] africa = (CountryTable[])request.getAttribute("AFRICA");
-	CountryTable[] europe = (CountryTable[])request.getAttribute("EUROPE");
-	CountryTable[] n_america = (CountryTable[])request.getAttribute("N_AMERICA");
-	CountryTable[] s_america = (CountryTable[])request.getAttribute("S_AMERICA");
-	CountryTable[] oceania = (CountryTable[])request.getAttribute("OCEANIA");
+// 大陸ごとの国テーブル(国情報 + 首都 + 言語リスト)配列を取得する
+CountryTable[] asia = (CountryTable[])session.getAttribute("ASIA");
+CountryTable[] africa = (CountryTable[])session.getAttribute("AFRICA");
+CountryTable[] europe = (CountryTable[])session.getAttribute("EUROPE");
+CountryTable[] n_america = (CountryTable[])session.getAttribute("N_AMERICA");
+CountryTable[] s_america = (CountryTable[])session.getAttribute("S_AMERICA");
+CountryTable[] oceania = (CountryTable[])session.getAttribute("OCEANIA");
 %>
 
 <!DOCTYPE html>
@@ -21,41 +21,6 @@
 	<!-- jQueryをCDNを使って読み込む -->
 	<link href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" rel="stylesheet">
 	<script src="http://code.jquery.com/jquery-3.1.1.min.js"></script>
-	<script>
-		jQuery(function($) {
-			// セレクトボックスが変更されたら処理をする
-			$('#continent-select').change(function() {
-				// 選択した値を取得
-				var select_val = $('#continent-select option:selected').val();
-				console.log("select_val=" + select_val);
-				// h2要素のノードリストを取得
-				var obj = document.getElementsByTagName("h2");
-				if (select_val == "") {
-					obj[0].innerHTML = "地域の国情報";
-				} else {
-					obj[0].innerHTML = select_val + "の国情報";
-				}
-
-				// tbodyのtr数回 処理をする
-				$.each($("#country-table tbody tr"), function(index, element) {
-					// 選択した値が空欄だったら、全ての行を表示する為の処理
-					if (select_val == "") {
-						$(element).css("display", "table-row");
-						return true;
-					}
-					// 1行をテキストとして取り出し、セレクトボックスで選択した値があるかをチェック
-					var row_text = $(element).text();
-					if (row_text.indexOf(select_val) != -1) {
-						// 見つかった場合は表示する
-						$(element).css("display", "table-row");
-					} else {
-						// 見つからなかった場合は非表示に
-						$(element).css("display", "none");
-					}
-				});
-			});
-		});
-	</script>
 	<style type="text/css">
 		.hidden { visibility: collapse; }
 	</style>
@@ -63,7 +28,7 @@
 
 <body>
 <main class="container">
-	<h2>地域の国情報</h2>
+	<h2>地域ごとの国一覧表</h2>
 	<form action="" method="post">
 		<%------------------大陸選択用selectBox ---------------%>
 		<div id="search">
@@ -171,7 +136,7 @@
 	<p><a href="<c:url value='/top_page.html' />">index</a></p>
 
 
-	<script>
+<!-- 	<script>
 	$(function() {
 		// 大陸名が変更されたら発動
 		$('select[name="selectBox1"]').change(function() {
@@ -200,7 +165,43 @@
 			}
 		});
 	});
-	</script>
+	</script> -->
 </main>
+<script>
+	jQuery(function($) {
+		// セレクトボックスが変更されたら処理をする
+		$('#continent-select').change(function() {
+			// 選択した値を取得
+			var select_val = $('#continent-select option:selected').val();
+			console.log("select_val=" + select_val);
+			// h2要素のノードリストを取得
+			var obj = document.getElementsByTagName("h2");
+			if (select_val == "") {
+				obj[0].innerHTML = "地域ごとの国一覧表";
+			} else {
+				obj[0].innerHTML = select_val + "の国一覧表";
+			}
+
+			// tbodyのtr数回 処理をする
+			$.each($("#country-table tbody tr"), function(index, element) {
+				// 選択した値が空欄だったら、全ての行を表示する為の処理
+				if (select_val == "") {
+					$(element).css("display", "table-row");
+					return true;
+				}
+				// 1行をテキストとして取り出し、セレクトボックスで選択した値があるかをチェック
+				var row_text = $(element).text();
+				if (row_text.indexOf(select_val) != -1) {
+					// 見つかった場合は表示する
+					$(element).css("display", "table-row");
+				} else {
+					// 見つからなかった場合は非表示に
+					$(element).css("display", "none");
+				}
+			});
+		});
+	});
+</script>
+
 </body>
 </html>
