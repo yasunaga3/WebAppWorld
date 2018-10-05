@@ -52,22 +52,22 @@
 			<select name="selectBox2" id="country-select">
 				<option value="default" selected="selected" class="msg">国名を選択してください</option>
 				<% for (CountryTable c1 : asia) {	%>
-					<option value =<%=c1.getCountry().getName() %> class="opt1"><%=c1.getCountry().getName() %></option>
+					<option value =<%=c1.getCountry().getCode() %> class="opt1"><%=c1.getCountry().getName() %></option>
 				<% } %>
 				<% for (CountryTable c2 : africa) {	%>
-					<option value =<%=c2.getCountry().getName() %> class="opt2"><%=c2.getCountry().getName() %></option>
+					<option value =<%=c2.getCountry().getCode() %> class="opt2"><%=c2.getCountry().getName() %></option>
 				<% } %>
 				<% for (CountryTable c3 : europe) {	%>
-					<option value =<%=c3.getCountry().getName() %> class="opt3"><%=c3.getCountry().getName() %></option>
+					<option value =<%=c3.getCountry().getCode() %> class="opt3"><%=c3.getCountry().getName() %></option>
 				<% } %>
 				<% for (CountryTable c4 : n_america) {	%>
-					<option value =<%=c4.getCountry().getName() %> class="opt4"><%=c4.getCountry().getName() %></option>
+					<option value =<%=c4.getCountry().getCode() %> class="opt4"><%=c4.getCountry().getName() %></option>
 				<% } %>
 				<% for (CountryTable c5 : s_america) {	%>
-					<option value =<%=c5.getCountry().getName() %> class="opt5"><%=c5.getCountry().getName() %></option>
+					<option value =<%=c5.getCountry().getCode() %> class="opt5"><%=c5.getCountry().getName() %></option>
 				<% } %>
 				<% for (CountryTable c6 : oceania) {	%>
-					<option value =<%=c6.getCountry().getName() %> class="opt6"><%=c6.getCountry().getName() %></option>
+					<option value =<%=c6.getCountry().getCode() %> class="opt6"><%=c6.getCountry().getName() %></option>
 				<% } %>
 			</select>
 		</div>
@@ -81,36 +81,11 @@
 		if(countryName == null || countryName.equals("")) { b1 = true; }
 		if(continentName == null || continentName.equals("")) { b2 = true; }
 		if(cities == null || cities.size() == 0) { b3 = true; }
-		if(!b1 && !b2 && !b3) {
-		%>
-		<%-- 国別都市情報表示用table --%>
+	%>
+		<% if(!b1 && !b2 && !b3) { %>
+			<%-- 国別都市情報表示用table --%>
 			<c:import url="_city_table.jsp" />
 		<%}%>
-
-<%-- 	<div id="city-data">
-		<table id="city-table" class="table table-borderd">
-			<thead>
-				<tr class="active">
-					<td class="hidden">Country</td>
-					<td>City Name</td>
-					<td>District</td>
-					<td>Population</td>
-				</tr>
-			</thead>
-			<tbody>
-			<%for(CountryTable c1 : asia) { %>
-					<%for(City city1 : c1.getCountry().getCities()) { %>
-						<tr>
-							<td><%=c1.getCountry().getName() %></td>
-							<td><%=city1.getName() %></td>
-							<td><%=city1.getDistrict() %></td>
-							<td><%=city1.getPopulation() %></td>
-						</tr>
-					<% } %>
-			<% } %>
-			</tbody>
-		</table>
-	</div> --%>
 
 	<br />
 	<p><a href="<c:url value='/top_page.html' />">index</a></p>

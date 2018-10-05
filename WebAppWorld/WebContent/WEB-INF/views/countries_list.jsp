@@ -28,7 +28,7 @@ CountryTable[] oceania = (CountryTable[])session.getAttribute("OCEANIA");
 
 <body>
 <main class="container">
-	<h2>地域ごとの国一覧表</h2>
+	<h2>世界の国一覧表</h2>
 	<form action="" method="post">
 		<%------------------大陸選択用selectBox ---------------%>
 		<div id="search">

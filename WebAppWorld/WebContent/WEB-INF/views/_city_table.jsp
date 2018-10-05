@@ -14,7 +14,7 @@
 cities.size()=<%=cities.size() %><br>
 
 <%------------- 国別都市情報表示用table -----------%>
-<div id="city-data">
+<div class="container">
 	<table id="city-table" class="table table-borderd">
 		<thead>
 		<tr>
